@@ -1,0 +1,87 @@
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Type checkers / linters
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# ============================================================
+# Node / Frontend
+# ============================================================
+node_modules/
+.next/
+out/
+.nuxt/
+dist/
+
+# ============================================================
+# Environment & Secrets
+# ============================================================
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ============================================================
+# Docker
+# ============================================================
+*.log
+
+# ============================================================
+# IDEs & Editors
+# ============================================================
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ============================================================
+# Project-specific
+# ============================================================
+# Never commit reference material git history
+reference_materials/
+
+# CUAD legal dataset — used locally for testing only (too large for git)
+CUAD_v1/
+
+# Uploaded PDFs (stored in MinIO, not git)
+uploads/
+storage/
+
+# Alembic generated migration files are committed; compiled caches are not
+backend/app/alembic/versions/__pycache__/

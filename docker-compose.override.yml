@@ -1,0 +1,31 @@
+# Development overrides — applied automatically when running `docker compose up`
+# These settings enable hot-reload and expose debug tooling.
+# Do NOT commit secrets or production settings here.
+
+services:
+
+  backend:
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      - ENVIRONMENT=local
+
+  celery-worker:
+    command: celery -A app.worker.celery_app worker --loglevel=debug --concurrency=1
+
+  frontend:
+    command: npm run dev
+
+  # ── Celery Flower (task monitoring UI) — dev only ───────────────────────────
+  flower:
+    image: mher/flower:latest
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - celery-worker
+    env_file:
+      - .env
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - FLOWER_PORT=5555
+    ports:
+      - "5555:5555"
