@@ -97,12 +97,13 @@ services:
       - POSTGRES_SERVER=postgres
       - REDIS_URL=redis://redis:6379/0
       - MINIO_ENDPOINT=minio:9000
+    command: sh -c "scripts/prestart.sh && uvicorn app.main:app --host 0.0.0.0 --port 8000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
       interval: 15s
       timeout: 5s
       retries: 5
-      start_period: 30s
+      start_period: 60s
     ports:
       - "8000:8000"
     volumes:
@@ -116,12 +117,8 @@ services:
     restart: unless-stopped
     command: celery -A app.worker.celery_app worker --loglevel=info --concurrency=2
     depends_on:
-      postgres:
+      backend:
         condition: service_healthy
-      redis:
-        condition: service_healthy
-      minio-init:
-        condition: service_completed_successfully
     env_file:
       - .env
     environment:

@@ -5,7 +5,7 @@
 services:
 
   backend:
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: sh -c "scripts/prestart.sh && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     environment:
       - ENVIRONMENT=local
 

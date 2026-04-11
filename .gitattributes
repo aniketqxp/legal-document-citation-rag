@@ -1,0 +1,18 @@
+# Enforce Unix line endings for shell scripts (required for Linux containers)
+*.sh text eol=lf
+
+# Normalize text files
+* text=auto
+
+# Binary files — no line ending conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
