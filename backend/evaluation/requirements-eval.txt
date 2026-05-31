@@ -1,0 +1,26 @@
+# Dependencies for the evaluation harness (corpus.py + run_eval.py).
+#
+# The harness reuses the app's services, so it needs the same core libraries —
+# but NOT the web/worker-only deps (FastAPI, uvicorn, Celery, pdfplumber, boto3),
+# which the eval never imports. Versions are looser than the app's pins so this
+# set installs cleanly in a standalone venv on a current Python (incl. 3.13).
+#
+# Install into a dedicated venv:
+#   python -m venv .venv-eval
+#   .venv-eval\Scripts\Activate.ps1        # PowerShell
+#   pip install -r evaluation/requirements-eval.txt
+
+# ── Experiment tracking ───────────────────────────────────────
+mlflow>=2.18,<3.0
+
+# ── App service dependencies (chunking, embeddings, retrieval, models) ──
+sqlmodel>=0.0.21,<0.1.0
+sqlalchemy[asyncio]>=2.0.36,<2.1.0
+asyncpg>=0.30.0,<0.31.0
+pgvector>=0.3.5,<0.4.0
+pydantic-settings>=2.5.0,<3.0.0
+openai>=1.50.0,<2.0.0
+tiktoken>=0.8.0,<0.9.0
+# Imported transitively: the corpus builder reuses the parser's ParsedBlock and
+# heading heuristic, and app.services.chunker imports app.services.pdf_parser.
+pdfplumber>=0.11.0,<0.12.0
