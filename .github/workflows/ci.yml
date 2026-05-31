@@ -1,0 +1,51 @@
+# Continuous Integration for the backend.
+#
+# Two fast, hermetic jobs that run on every push to main and every pull request:
+#   • lint  — ruff static checks on the evaluation harness and test suite.
+#   • test  — the pytest unit suite, which includes the retrieval-metric logic
+#             that the eval's quality numbers depend on.
+#
+# Both jobs are deterministic: no database, no object storage, no API keys. The
+# live retrieval eval (evaluation/run_eval.py) needs Postgres + an embeddings
+# key, so it is run locally / on demand rather than on every commit.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install ruff
+        run: pip install -r requirements-dev.txt
+      - name: Ruff check
+        run: ruff check evaluation tests
+
+  test:
+    name: Unit tests (pytest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      - name: Run unit tests
+        run: pytest -q
