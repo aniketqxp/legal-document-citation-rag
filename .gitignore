@@ -52,6 +52,7 @@ dist/
 .env
 .env.local
 .env.*.local
+frontend/.env
 *.pem
 *.key
 
@@ -82,6 +83,13 @@ CUAD_v1/
 # Uploaded PDFs (stored in MinIO, not git)
 uploads/
 storage/
+
+# Agent and local smoke-test artifacts
+.agent_handoff/
+backend/scratch_*.py
+test_contract.PDF
+test_pipeline.py
+frontend/openapi-ts-error-*.log
 
 # Alembic generated migration files are committed; compiled caches are not
 backend/app/alembic/versions/__pycache__/
