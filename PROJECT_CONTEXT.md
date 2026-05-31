@@ -1,27 +1,48 @@
-# MISSION: Evolved Legal AI MVP ("Harvey Clone")
+# MISSION: legal-document-citation-rag
 
 ## 1. Project Overview
-We are building a highly accurate, tenant-isolated Legal AI Contract Review platform. 
-The core user journey: A lawyer uploads a massive PDF contract -> Asks a question -> Receives a 3-paragraph answer where *every sentence* has a clickable citation pointing to the exact page/section in the original PDF document.
 
-## 2. The Reference Material
-In the `/reference_material` folder, you have three open-source repositories. Do NOT modify these files. Use them strictly as blueprints to extract logic and patterns into our active workspace:
-- `/taxonomy`: Blueprint for the Next.js App Router frontend, dashboard UI, and Clerk authentication.
-- `/full-stack-fastapi-template`: Blueprint for the Python backend, Docker/PostgreSQL setup, and secure API routing.
-- `/ragflow`: Blueprint for deep PDF document parsing, table extraction, and intelligent chunking.
+This project is a tenant-isolated legal contract review application.
 
-## 3. The Tech Stack Constraints
-- **Frontend:** Next.js 14+ (App Router), Tailwind CSS, Shadcn UI.
-- **Backend:** Python 3.11+, FastAPI (async), SQLAlchemy/SQLModel.
-- **Database:** PostgreSQL.
-- **Vector Store:** PostgreSQL with the `pgvector` extension.
-- **Task Queue:** Celery + Redis (for background document ingestion).
-- **AI Models:** Google Gemini 1.5 Flash (for fast extraction/ingestion) and Gemini 1.5 Pro (for reasoning).
-- **LLM Routing:** All LLM API calls must be routed through OpenRouter to standardize endpoints. Do NOT use the default OpenAI API endpoints or keys.
+Core user journey:
 
-## 4. Hard Rules (Non-Negotiable)
-1. **Tenant Isolation:** Every single database table MUST have a `tenant_id` column. Every single database query and vector search MUST filter by `tenant_id`. Cross-tenant data leakage is an existential failure.
-2. **Citation Accuracy:** The RAG pipeline must return exact metadata (page number, section, document name). Do not use fixed-size token chunking; use semantic/section-based chunking adapted from the RagFlow reference material.
-3. **No Hallucinations:** The prompt must force the LLM to output "I cannot determine this from the provided documents" if the retrieved context does not explicitly contain the answer.
-4. **No Cloud Vector SaaS:** Do NOT use Pinecone, Weaviate Cloud, or any external vector database SaaS. All embeddings must be stored and queried locally within PostgreSQL using the `pgvector` extension to ensure data sovereignty and atomic transactions.
-5. **No Blind Mashing:** Do not attempt to merge the reference repos blindly. Build the application phase by phase in the root directory, manually adapting the required logic from `/reference_material` into our stack.
+1. A user uploads a PDF contract.
+2. The backend stores the PDF in MinIO and indexes extracted text into PostgreSQL.
+3. The user asks a question about one or more documents.
+4. The API returns an answer with bracketed citations that map back to document,
+   page, section, and source snippet metadata.
+
+## 2. Active Stack
+
+- Frontend: Vite, React, TypeScript, TanStack Router, TanStack Query, Tailwind CSS.
+- Backend: Python 3.11, FastAPI, SQLModel, SQLAlchemy asyncio.
+- Database: PostgreSQL with pgvector.
+- Task queue: Celery with Redis.
+- Object storage: MinIO.
+- AI routing: OpenRouter for chat completions and embeddings.
+- Local dataset/reference inputs: CUAD PDFs and upstream reference repositories are
+  kept out of git and used only as local implementation references.
+
+## 3. RAG Flow
+
+1. Upload endpoint validates PDF inputs and writes the file to MinIO.
+2. A tenant-scoped Celery task parses the PDF with pdfplumber.
+3. The chunker groups text by detected section and page metadata.
+4. Embeddings are generated through OpenRouter and stored in pgvector.
+5. Query handling embeds the question, runs vector search plus PostgreSQL full-text
+   search, merges results with reciprocal rank fusion, and sends the retrieved
+   context to the chat model through OpenRouter.
+6. The answer parser resolves aliases like `[Source 1]` into structured citation
+   metadata for the frontend PDF viewer.
+
+## 4. Hard Rules
+
+1. Tenant isolation: every tenant-owned table has `tenant_id`, and every read path
+   must filter by `tenant_id`.
+2. Citation metadata: chunks store document ID, filename, page number, section
+   title, and snippet seed data for citation rendering.
+3. No unsupported answers: prompts require the model to answer
+   `I cannot determine this from the provided documents.` when retrieved context
+   does not contain the answer.
+4. Local vector storage: embeddings are stored in PostgreSQL with pgvector.
+5. OpenRouter routing: chat completions and embeddings use OpenRouter endpoints.
