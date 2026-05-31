@@ -1,6 +1,6 @@
 # legal-document-citation-rag
 
-[![CI](https://github.com/aniketqxp/legal-document-citation-rag/actions/workflows/ci.yml/badge.svg)](https://github.com/aniketqxp/legal-document-citation-rag/actions/workflows/ci.yml)
+[![CI](https://github.com/aniketqxp/legal-document-citation-rag/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aniketqxp/legal-document-citation-rag/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -18,27 +18,22 @@ Upload contract PDFs, ask questions in plain language, and receive answers where
 Two independent pipelines share a single Postgres instance:
 
 ```mermaid
-flowchart TD
-    subgraph Ingestion
-        A[PDF Upload] -->|object stored| B[(MinIO)]
-        B -->|task queued| C[Celery Worker]
-        C --> D[pdfplumber Parser]
-        D --> E["Section-aware Chunker\n(512-token windows, 64-token overlap)"]
-        E -->|batch| F["OpenRouter Embeddings\ntext-embedding-3-small · 1536 dims"]
-        F --> G[(pgvector / Postgres)]
-    end
+graph TD
+    A[/PDF Upload/] --> B([Parse · Chunk · Embed])
+    B --> C[(Vector Store\npgvector + Postgres)]
 
-    subgraph Query
-        H[User Question] -->|embed| I[Query Vector]
-        I --> J[pgvector kNN]
-        I --> K[Postgres FTS]
-        G --> J
-        G --> K
-        J --> L[RRF Fusion]
-        K --> L
-        L -->|top-6 chunks| M["Gemini LLM\ngoogle-genai · gemini-2.5-flash"]
-        M --> N[Answer + Structured Citations]
-    end
+    D[/User Question/] --> E([Hybrid Retrieve\nkNN + FTS + RRF])
+    C --> E
+    E --> F([Gemini LLM])
+    F --> G[/Answer + Citations/]
+
+    style A fill:#2d3436,stroke:#000,color:#fff
+    style B fill:#0984e3,stroke:#000,color:#fff
+    style C fill:#00b894,stroke:#000,color:#fff
+    style D fill:#2d3436,stroke:#000,color:#fff
+    style E fill:#6c5ce7,stroke:#000,color:#fff
+    style F fill:#e17055,stroke:#000,color:#fff
+    style G fill:#2d3436,stroke:#000,color:#fff
 ```
 
 ---
