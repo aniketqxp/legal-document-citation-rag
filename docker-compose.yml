@@ -44,7 +44,7 @@ services:
     restart: unless-stopped
     command: server /data --console-address ":9001"
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
       retries: 5
       start_period: 20s
@@ -56,6 +56,7 @@ services:
     environment:
       - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
       - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
+      - MINIO_API_CORS_ALLOW_ORIGIN=http://localhost:5173,http://localhost:3000
     ports:
       - "9000:9000"   # S3 API endpoint
       - "9001:9001"   # MinIO Console UI
@@ -73,8 +74,8 @@ services:
       /bin/sh -c "
       mc alias set local http://minio:9000 $${MINIO_ACCESS_KEY} $${MINIO_SECRET_KEY};
       mc mb --ignore-existing local/$${MINIO_BUCKET};
-      mc anonymous set none local/$${MINIO_BUCKET};
-      echo 'MinIO bucket ready.';
+      mc anonymous set download local/$${MINIO_BUCKET};
+      echo 'MinIO bucket ready with public-read permissions.';
       exit 0;
       "
 
@@ -128,24 +129,9 @@ services:
     volumes:
       - ./backend:/app  # dev bind mount
 
-  # ── Next.js Frontend ────────────────────────────────────────────────────────
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    depends_on:
-      backend:
-        condition: service_healthy
-    env_file:
-      - .env
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app        # dev bind mount
-      - /app/node_modules      # preserve container node_modules
+# Frontend service removed for Phase 3 ingestion testing
+
+
 
 volumes:
   postgres-data:

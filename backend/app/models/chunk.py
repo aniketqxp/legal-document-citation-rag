@@ -13,6 +13,7 @@ CRITICAL: tenant_id is on every chunk. All vector searches MUST include
 
 import uuid
 
+import sqlalchemy as sa
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import Column
 from sqlmodel import Field, SQLModel
@@ -45,7 +46,7 @@ class DocumentChunk(TenantBase, table=True):
     )
 
     # The raw text content of this chunk
-    content: str = Field(sa_column=Column("content", type_=None, nullable=False))
+    content: str = Field(sa_column=Column("content", sa.Text(), nullable=False))
 
     # Citation metadata — set during chunking, never changes
     page_number: int = Field(

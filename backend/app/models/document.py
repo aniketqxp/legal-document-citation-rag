@@ -10,6 +10,7 @@ Status lifecycle:
 
 import enum
 import uuid
+from datetime import datetime
 
 from sqlalchemy import Column
 from sqlalchemy import Enum as SAEnum
@@ -36,6 +37,8 @@ class DocumentPublic(SQLModel):
     file_size_bytes: int
     error_message: str | None
     uploaded_by_id: uuid.UUID
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 class DocumentStatusUpdate(SQLModel):

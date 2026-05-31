@@ -36,12 +36,12 @@ async def init_db() -> None:
         if not existing:
             tenant = await create_tenant(
                 session,
-                TenantCreate(name="Harvey Admin Workspace"),
+                TenantCreate(name="legal-document-citation-rag Workspace"),
             )
             user_in = UserCreate(
                 email=settings.FIRST_SUPERUSER,
                 password=settings.FIRST_SUPERUSER_PASSWORD,
-                full_name="Harvey Admin",
+                full_name="Workspace Admin",
                 is_superuser=True,
             )
             await create_user(session, user_in, tenant_id=tenant.id)

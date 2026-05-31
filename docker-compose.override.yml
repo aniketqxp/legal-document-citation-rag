@@ -12,8 +12,9 @@ services:
   celery-worker:
     command: celery -A app.worker.celery_app worker --loglevel=debug --concurrency=1
 
-  frontend:
-    command: npm run dev
+#  frontend:
+#    command: npm run dev
+
 
   # ── Celery Flower (task monitoring UI) — dev only ───────────────────────────
   flower:

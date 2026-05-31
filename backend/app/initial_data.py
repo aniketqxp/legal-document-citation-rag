@@ -18,7 +18,10 @@ logger = logging.getLogger(__name__)
 
 async def main() -> None:
     logger.info("Creating initial data...")
+    from app.services.storage import ensure_bucket_cors, ensure_bucket_exists
     await init_db()
+    await ensure_bucket_exists()
+    await ensure_bucket_cors()
     logger.info("Initial data created successfully.")
 
 

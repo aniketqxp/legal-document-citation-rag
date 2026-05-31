@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "harvey-backend"
+name = "legal-document-citation-rag-backend"
 version = "0.1.0"
-description = "Better Harvey — Legal AI Contract Review Platform"
+description = "legal-document-citation-rag — Tenant-Isolated Legal AI Contract Review Platform"
 requires-python = ">=3.11"
 
 [tool.hatch.build.targets.wheel]

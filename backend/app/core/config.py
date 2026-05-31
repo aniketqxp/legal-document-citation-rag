@@ -57,15 +57,6 @@ class Settings(BaseSettings):
             f"@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
 
-    # Sync URI for Alembic (asyncpg doesn't support sync operations)
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def ALEMBIC_DATABASE_URI(self) -> str:
-        return (
-            f"postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
-            f"@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-        )
-
     # ── Redis (Celery broker) ─────────────────────────────────────────────────
     REDIS_URL: str = "redis://redis:6379/0"
 
@@ -77,10 +68,10 @@ class Settings(BaseSettings):
     MINIO_ENDPOINT: str = "minio:9000"
     MINIO_ACCESS_KEY: str = "minioadmin"
     MINIO_SECRET_KEY: str
-    MINIO_BUCKET: str = "harvey-documents"
+    MINIO_BUCKET: str = "legal-document-citation-rag-documents"
     MINIO_USE_SSL: bool = False
 
-    # ── OpenRouter LLM Gateway ────────────────────────────────────────────────
+    # ── AI Providers (Google AI Studio + OpenRouter) ────────────────────────
     OPENROUTER_API_KEY: str = ""
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
 
@@ -89,8 +80,9 @@ class Settings(BaseSettings):
     EMBEDDING_DIMENSIONS: int = 1536  # MUST match Vector(1536) in DocumentChunk
 
     # ── LLM Models ────────────────────────────────────────────────────────────
-    FAST_LLM_MODEL: str = "google/gemini-flash-1.5"          # ingestion tasks
-    REASONING_LLM_MODEL: str = "google/gemini-pro-1.5"       # user query tasks
+    FAST_LLM_MODEL: str = "google/gemini-flash-1.5"              # ingestion tasks
+    REASONING_LLM_MODEL: str = "google/gemini-pro-1.5"           # future reasoning
+    QUERY_LLM_MODEL: str = "google/gemini-2.5-flash"             # Phase 4 RAG queries (free tier)
 
     # ── Validation: warn on default secrets, raise in production ──────────────
     def _check_default_secret(self, var_name: str, value: str | None) -> None:

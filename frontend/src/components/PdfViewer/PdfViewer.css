@@ -1,0 +1,69 @@
+.pdf-viewer-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: #010409;
+  position: relative;
+}
+
+.pdf-highlighter-container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/*
+  The PdfHighlighter library creates a scrollable div.
+  We want to make sure it fills our flex container.
+*/
+.PdfHighlighter {
+  height: 100% !important;
+  width: 100% !important;
+  background-color: #0d1117;
+}
+
+.highlight-popup {
+  background: #21262d;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+.pdf-loading, .pdf-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  color: #8b949e;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+}
+
+/* Override the default library highlight style for custom theme */
+.Highlight__part {
+  background: rgba(255, 234, 0, 0.45) !important;
+  mix-blend-mode: multiply;
+  border-bottom: 2px solid rgba(255, 200, 0, 0.8);
+}
+
+/* Pulse animation when the viewer auto-scrolls to this highlight */
+@keyframes highlightPulse {
+  0%   { background: rgba(255, 220, 0, 0.9) !important; box-shadow: 0 0 16px 4px rgba(255, 200, 0, 0.55); }
+  60%  { background: rgba(255, 234, 0, 0.65) !important; box-shadow: 0 0 8px 2px rgba(255, 200, 0, 0.25); }
+  100% { background: rgba(255, 234, 0, 0.45) !important; box-shadow: none; }
+}
+
+.Highlight--scrolledTo .Highlight__part {
+  animation: highlightPulse 1.8s ease-out forwards !important;
+}
+
+.pdf-error-container { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; padding: 40px; background-color: #161b22; color: #f85149; text-align: center; } .pdf-error-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; } .pdf-error-msg { font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; margin-bottom: 20px; max-width: 80%; } .pdf-error-hint { font-size: 0.9rem; color: #8b949e; }

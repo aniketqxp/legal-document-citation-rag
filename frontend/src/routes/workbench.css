@@ -1,0 +1,506 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Workbench — Phase 6
+   Dark-mode legal workbench layout with multi-doc selection, typing indicator,
+   and polished placeholder.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+
+.workbench-container {
+  display: flex;
+  height: calc(100vh - 120px);
+  gap: 20px;
+  background-color: #0d1117;
+  color: #c9d1d9;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: "Inter", system-ui, sans-serif;
+  padding: 10px;
+}
+
+.workbench-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 20px;
+  min-width: 450px;
+  overflow: hidden;
+}
+
+.workbench-right {
+  flex: 1.2;
+  display: flex;
+  background-color: #010409;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Document Shelf ──────────────────────────────────────────────────────── */
+
+.doc-shelf {
+  margin-bottom: 16px;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.shelf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.shelf-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.shelf-header h3 {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+/* Scope indicator badge: "All documents" / "2 of 4 selected" */
+.scope-badge {
+  font-size: 0.72rem;
+  color: #58a6ff;
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  border-radius: 10px;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+
+.upload-btn {
+  background: #238636;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.upload-btn:hover:not(:disabled) {
+  background: #2ea043;
+}
+
+.upload-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Document List ────────────────────────────────────────────────────────── */
+
+.doc-list {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #30363d transparent;
+}
+
+.doc-item {
+  background: #21262d;
+  border: 1px solid #30363d;
+  padding: 7px 11px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 170px;
+  max-width: 230px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+  flex-shrink: 0;
+}
+
+.doc-item:hover {
+  background: #292e36;
+  border-color: #444c56;
+}
+
+/* ── Status left-border colours ────────────────────────────────────────────── */
+
+.doc-item.ready {
+  border-left: 3px solid #238636;
+}
+
+.doc-item.pending,
+.doc-item.processing {
+  border-left: 3px solid #d29922;
+  animation: pulse 2s infinite;
+}
+
+.doc-item.failed {
+  border-left: 3px solid #f85149;
+}
+
+/* ── Selected state ─────────────────────────────────────────────────────── */
+
+.doc-item.selected {
+  background: rgba(31, 111, 235, 0.12);
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 1px rgba(31, 111, 235, 0.35);
+}
+
+.doc-item.selected:hover {
+  background: rgba(31, 111, 235, 0.18);
+}
+
+/* Checkbox */
+.doc-checkbox {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: #1f6feb;
+  cursor: pointer;
+}
+
+.doc-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #c9d1d9;
+}
+
+/* Small badge for non-ready statuses */
+.doc-status-badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8b949e;
+  background: #0d1117;
+  border-radius: 4px;
+  padding: 1px 4px;
+  flex-shrink: 0;
+}
+
+.empty-msg {
+  color: #8b949e;
+  font-size: 0.85rem;
+  margin: 4px 0 0;
+}
+
+/* ── Chat History ─────────────────────────────────────────────────────────── */
+
+.chat-history {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 4px 4px 2px;
+  margin-bottom: 14px;
+  scrollbar-width: thin;
+  scrollbar-color: #30363d transparent;
+}
+
+.chat-bubble {
+  max-width: 90%;
+  padding: 11px 15px;
+  border-radius: 12px;
+  line-height: 1.65;
+  font-size: 0.93rem;
+  animation: slideIn 0.18s ease-out;
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+  background-color: #1f6feb;
+  color: white;
+  border-bottom-right-radius: 3px;
+}
+
+.chat-bubble.assistant {
+  align-self: flex-start;
+  background-color: #21262d;
+  border: 1px solid #30363d;
+  border-bottom-left-radius: 3px;
+}
+
+.chat-bubble.error {
+  align-self: stretch;
+  background-color: rgba(248, 81, 73, 0.08);
+  border: 1px solid #f85149;
+  color: #f85149;
+  font-size: 0.84rem;
+  padding: 8px 14px;
+  text-align: center;
+  border-radius: 6px;
+  max-width: 100%;
+}
+
+/* Amber "model busy / rate limited" variant — distinct from hard errors */
+.chat-bubble.rate-limit {
+  align-self: stretch;
+  background-color: rgba(210, 153, 34, 0.10);
+  border: 1px solid #d29922;
+  color: #e3b341;
+  font-size: 0.84rem;
+  padding: 8px 14px;
+  text-align: center;
+  border-radius: 6px;
+  max-width: 100%;
+}
+
+/* ── Typing indicator (3 animated dots) ─────────────────────────────────── */
+
+.chat-bubble.processing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 16px;
+  min-width: 60px;
+}
+
+.typing-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #58a6ff;
+  animation: typingBounce 1.2s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* ── Chat Input Area ──────────────────────────────────────────────────────── */
+
+.chat-input-area {
+  display: flex;
+  gap: 10px;
+  background: #0d1117;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #30363d;
+  transition: border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.chat-input-area:focus-within {
+  border-color: #58a6ff;
+}
+
+.chat-textarea {
+  flex: 1;
+  background: transparent;
+  color: #c9d1d9;
+  border: none;
+  resize: none;
+  min-height: 40px;
+  max-height: 200px;
+  font-size: 0.93rem;
+  outline: none;
+  line-height: 1.5;
+  font-family: inherit;
+}
+
+.chat-textarea::placeholder {
+  color: #484f58;
+}
+
+.chat-submit-btn {
+  background: #1f6feb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-end;
+  height: 36px;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.chat-submit-btn:hover:not(:disabled) {
+  background: #388bfd;
+}
+
+.chat-submit-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Citation Chips ───────────────────────────────────────────────────────── */
+
+.citation-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(88, 166, 255, 0.12);
+  color: #58a6ff;
+  border: 1px solid rgba(88, 166, 255, 0.45);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin: 0 3px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    border-color 0.12s,
+    transform 0.08s;
+  vertical-align: middle;
+}
+
+.citation-chip:hover {
+  background: rgba(88, 166, 255, 0.22);
+  border-color: #58a6ff;
+  transform: translateY(-1px);
+}
+
+.citation-chip:active {
+  transform: translateY(0);
+}
+
+/* ── PDF Loading Overlay ──────────────────────────────────────────────────── */
+
+.pdf-loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 14px;
+  background: #010409;
+  color: #58a6ff;
+  font-size: 0.88rem;
+  letter-spacing: 0.3px;
+}
+
+.pdf-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(88, 166, 255, 0.18);
+  border-top-color: #58a6ff;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── PDF Viewer Panel ─────────────────────────────────────────────────────── */
+
+.pdf-viewer {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.pdf-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background: radial-gradient(circle at 50% 40%, #161b22 0%, #0d1117 70%);
+}
+
+.placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.45;
+}
+
+.placeholder-icon {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+
+.placeholder-content h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #c9d1d9;
+}
+
+.placeholder-content p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #8b949e;
+  max-width: 240px;
+  line-height: 1.5;
+}
+
+/* ── Utility & Animations ─────────────────────────────────────────────────── */
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}

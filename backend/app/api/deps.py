@@ -69,7 +69,11 @@ async def get_current_user(session: SessionDep, token: TokenDep) -> User:
 
     user = await get_user_by_id(session, user_id=user_id, tenant_id=tenant_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found or session expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     if not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return user

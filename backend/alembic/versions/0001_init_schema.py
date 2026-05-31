@@ -81,9 +81,6 @@ def upgrade() -> None:
     op.create_index("ix_app_user_tenant_id", "app_user", ["tenant_id"])
 
     # ── document_status enum + document table ─────────────────────────────────
-    op.execute(
-        "CREATE TYPE document_status AS ENUM ('pending', 'processing', 'ready', 'failed')"
-    )
     op.create_table(
         "document",
         sa.Column("id", sa.Uuid(), primary_key=True),
@@ -91,7 +88,7 @@ def upgrade() -> None:
         sa.Column(
             "uploaded_by_id",
             sa.Uuid(),
-            sa.ForeignKey("app_user.id", ondelete="SET NULL"),
+            sa.ForeignKey("app_user.id", ondelete="CASCADE"),
             nullable=False,
         ),
         sa.Column("original_filename", sa.String(500), nullable=False),
@@ -100,7 +97,7 @@ def upgrade() -> None:
         sa.Column("minio_object_key", sa.String(1000), nullable=False),
         sa.Column(
             "status",
-            sa.Enum("pending", "processing", "ready", "failed", name="document_status", create_type=False),
+            sa.Enum("pending", "processing", "ready", "failed", name="document_status"),
             nullable=False,
             server_default="pending",
         ),
@@ -146,6 +143,12 @@ def upgrade() -> None:
         sa.Column("embedding", Vector(1536), nullable=True),
         sa.Column(
             "created_at",
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=sa.func.now(),
+        ),
+        sa.Column(
+            "updated_at",
             sa.DateTime(timezone=True),
             nullable=False,
             server_default=sa.func.now(),

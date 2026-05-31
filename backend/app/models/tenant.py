@@ -10,8 +10,9 @@ In the MVP, one Tenant is created per user registration
 
 import uuid
 from datetime import datetime, timezone
+from typing import Optional
 
-from sqlalchemy import Column, DateTime
+import sqlalchemy as sa
 from sqlmodel import Field, SQLModel
 
 
@@ -40,7 +41,9 @@ class Tenant(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str = Field(max_length=255, nullable=False)
     is_active: bool = Field(default=True, nullable=False)
-    created_at: datetime = Field(
+    created_at: Optional[datetime] = Field(
         default_factory=_utc_now,
-        sa_column=Column(DateTime(timezone=True), default=_utc_now, nullable=False),
+        nullable=False,
+        sa_type=sa.DateTime(timezone=True),
+        sa_column_kwargs={"server_default": "now()"},
     )

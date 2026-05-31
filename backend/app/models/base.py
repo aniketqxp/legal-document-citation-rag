@@ -15,8 +15,9 @@ tests/test_tenant_isolation.py.
 
 import uuid
 from datetime import datetime, timezone
+from typing import Optional
 
-from sqlalchemy import Column, DateTime
+import sqlalchemy as sa
 from sqlmodel import Field, SQLModel
 
 
@@ -29,6 +30,13 @@ class TenantBase(SQLModel):
 
     Provides: primary key, tenant isolation key, and audit timestamps.
     Do NOT instantiate directly — subclass with `table=True`.
+
+    NOTE: We intentionally do NOT use sa_column=Column(...) here because
+    a SQLAlchemy Column object can only be assigned to a single Table.
+    Sharing one Column instance across multiple subclasses causes:
+      "Column object 'created_at' already assigned to Table '...'"
+    Instead we use sa_column_kwargs so SQLModel creates a fresh Column
+    per concrete table while honouring our type/server_default/onupdate.
     """
 
     id: uuid.UUID = Field(
@@ -41,16 +49,15 @@ class TenantBase(SQLModel):
         nullable=False,
         description="Tenant isolation key. ALL queries MUST filter by this.",
     )
-    created_at: datetime = Field(
+    created_at: Optional[datetime] = Field(
         default_factory=utc_now,
-        sa_column=Column(DateTime(timezone=True), default=utc_now, nullable=False),
+        nullable=False,
+        sa_type=sa.DateTime(timezone=True),
+        sa_column_kwargs={"server_default": "now()"},
     )
-    updated_at: datetime = Field(
+    updated_at: Optional[datetime] = Field(
         default_factory=utc_now,
-        sa_column=Column(
-            DateTime(timezone=True),
-            default=utc_now,
-            onupdate=utc_now,
-            nullable=False,
-        ),
+        nullable=False,
+        sa_type=sa.DateTime(timezone=True),
+        sa_column_kwargs={"server_default": "now()", "onupdate": utc_now},
     )

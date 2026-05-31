@@ -60,9 +60,6 @@ class Message(TenantBase, table=True):
         nullable=False,
         description="'user' or 'assistant'",
     )
-    content: str = Field(
-        sa_column=Field(sa_column=None, nullable=False),
-        nullable=False,
-    )
+    content: str = Field(nullable=False)
     # Serialised JSON: List[{sentence_idx, page, section, document_id, document_name}]
     citations_json: str | None = Field(default=None, nullable=True)
