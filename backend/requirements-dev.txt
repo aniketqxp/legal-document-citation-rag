@@ -1,0 +1,6 @@
+# Developer / CI dependencies: linting and the unit-test suite.
+# Installed in CI on top of requirements.txt.
+
+pytest>=8.0,<9.0
+pytest-asyncio>=0.23,<0.25
+ruff>=0.6,<0.9
