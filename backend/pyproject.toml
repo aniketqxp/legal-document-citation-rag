@@ -18,6 +18,12 @@ line-length = 88
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "B", "UP"]
 
+[tool.ruff.lint.per-file-ignores]
+# evaluation modules bootstrap the env before importing app.* — imports must
+# appear after load_repo_env(), so E402 (module-level import not at top) is
+# expected and intentional throughout the package.
+"evaluation/*.py" = ["E402"]
+
 [tool.mypy]
 python_version = "3.11"
 strict = false
